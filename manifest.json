@@ -1,0 +1,34 @@
+{
+  "manifest_version": 3,
+  "name": "CousiGites",
+  "version": "1.0",
+  "description": "Permet, au cours de la navigation sur des sites de gites, voir en direct la distance entre un gîte et les maisons des uns des autres",
+  "permissions": [
+    "scripting", "activeTab", "storage"
+  ],
+  "host_permissions": [
+    "https://www.grandsgites.com/*"
+  ],
+  "action": {
+    "default_icon": "icon.png"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://www.grandsgites.com/*"],
+      "js": ["private/methods.js","helper-methods.js","content.js"]
+    }
+  ],
+  "web_accessible_resources": [
+      {
+        "resources": ["general-constants.json","private/data.json"],
+        "matches": ["<all_urls>"]
+      },
+      {
+        "resources":["panel.html"],
+        "matches":["<all_urls>"]
+      }
+    ]
+}

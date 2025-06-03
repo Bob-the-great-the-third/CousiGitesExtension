@@ -1,0 +1,11 @@
+{
+    "MAPS":{
+        "CORS_PROXY":"https://corsproxy.io/?"
+    },
+    "GRAND_GITES":{
+        "FINDING_COORDS":{
+            "DIV_ID":"ma_carte",
+            "ATTRIBUTE":"data-search"
+        }
+    }
+}
