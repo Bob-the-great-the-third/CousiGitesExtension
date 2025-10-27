@@ -18,7 +18,8 @@ window.HELPER_METHODS.load_locations = async function () {
 
     if (!result.locations) {
         // If nothing stored yet, fall back to defaults
-        const defaults = window.PRIVATE_METHODS.default_locations();
+        const PRIVATE_DATA = await HELPER_METHODS.load_json("./private/data.json");
+        const defaults = PRIVATE_DATA.DEFAULT_LOCATIONS;
         console.log("loading default locations");
         try {
             await chrome.storage.local.set({ locations: defaults });
@@ -58,8 +59,12 @@ window.HELPER_METHODS.send_requests = async function (coords_gite) {
         const CONSTANTS = await HELPER_METHODS.load_json("./general-constants.json");
         const locations = await window.HELPER_METHODS.load_locations();
 
+        console.log(locations)
+        console.log(coords_gite)
+
         const requests = locations.map(async (location) => {
             const coords_depart = `${location.x},${location.y}`;
+            console.log(coords_depart)
             const url = `${CONSTANTS.MAPS.CORS_PROXY}https://maps.googleapis.com/maps/api/directions/json?origin=${coords_depart}&destination=${coords_gite}&mode=driving&key=${PRIVATE_DATA.API_KEY}`;
 
             // console.log(`request sent ${location.location}`)

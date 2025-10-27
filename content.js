@@ -25,7 +25,7 @@ function load_right_panel(times) {
   if (document.getElementById('my-left-panel')) return;
 
   const iframe = document.createElement('iframe');
-  iframe.src = chrome.runtime.getURL('panel.html');
+  iframe.src = chrome.runtime.getURL('panel/panel.html');
   iframe.id = 'my-left-panel';
   iframe.style.cssText = `
     position: fixed;

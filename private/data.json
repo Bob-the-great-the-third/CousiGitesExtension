@@ -1,3 +1,15 @@
 {
-  "API_KEY":<API_KEY>
+  "API_KEY":"<API_KEY>",
+  "DEFAULT_LOCATIONS":[
+      {
+        "location":"Exemple: Paris",
+        "x":48.866730638543125,
+        "y":2.3370746448543853
+      },
+      {
+        "location":"Exemple: Lyon",
+        "x":45.7723685667064, 
+        "y":4.998676201427725
+      }
+    ]
 }

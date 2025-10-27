@@ -10,15 +10,12 @@
     "https://www.grandsgites.com/*"
   ],
   "action": {
-    "default_icon": "icon.png"
-  },
-  "background": {
-    "service_worker": "background.js"
+    "default_icon": "images/icon.png"
   },
   "content_scripts": [
     {
       "matches": ["https://www.grandsgites.com/*"],
-      "js": ["private/methods.js","helper-methods.js","content.js"]
+      "js": ["helper-methods.js","content.js"]
     }
   ],
   "web_accessible_resources": [
@@ -27,7 +24,7 @@
         "matches": ["<all_urls>"]
       },
       {
-        "resources":["panel.html"],
+        "resources":["panel/panel.html"],
         "matches":["<all_urls>"]
       }
     ]
