@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "CousiGites",
   "version": "1.0",
-  "description": "Permet, au cours de la navigation sur des sites de gites, voir en direct la distance entre un gîte et les maisons des uns des autres",
+  "description": "Permet, au cours de la navigation sur des sites de gites, de voir en direct la distance entre un gîte et les maisons des uns des autres",
   "permissions": [
     "scripting", "activeTab", "storage"
   ],
@@ -10,24 +10,25 @@
     "https://www.grandsgites.com/*"
   ],
   "action": {
-    "default_icon": "icon.png"
-  },
-  "background": {
-    "service_worker": "background.js"
+    "default_icon": "images/icon.png"
   },
   "content_scripts": [
     {
-      "matches": ["https://www.grandsgites.com/*"],
-      "js": ["private/methods.js","helper-methods.js","content.js"]
+      "matches": ["https://www.grandsgites.com/*", "https://www.gites.fr/*"],
+      "js": [
+        "private/methods.js","methods-toolbox/helper-methods.js","coords-extraction/site-configs.js",
+        "coords-extraction/strategies.js", "methods-toolbox/locations.js", "methods-toolbox/cache.js",
+        "content.js"
+      ]
     }
   ],
   "web_accessible_resources": [
       {
-        "resources": ["general-constants.json","private/data.json"],
+        "resources": ["constants.json","private/data.json"],
         "matches": ["<all_urls>"]
       },
       {
-        "resources":["panel.html"],
+        "resources":["panel/panel.html"],
         "matches":["<all_urls>"]
       }
     ]
