@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "CousiGites",
-  "version": "1.0",
+  "version": "2",
   "description": "Permet, au cours de la navigation sur des sites de gites, de voir en direct la distance entre un gîte et les maisons des uns des autres",
   "permissions": [
     "scripting", "activeTab", "storage"
