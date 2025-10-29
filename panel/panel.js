@@ -35,8 +35,6 @@ window.addEventListener('message', (event) => {
 
 function renderJsonList(data) {
 
-  console.log("data in render:")
-  console.log(data)
   const container = document.getElementById("json-container");
   if (!container)
     console.error("erreur")
@@ -61,7 +59,12 @@ function renderJsonList(data) {
     btn.textContent = 'X';             // safe text
     
     btn.addEventListener('click', async () => {
-      
+      // Upon deletion, since most of the code uses the json object to remove all object that have the same value but removal 
+      // from the web page is done through a unique id. 
+      // There is an edge case where, with two identic initial locations in the panel, the two are removed from: cache and local
+      // chrome storage while the web panel only removes one of the two.
+      // Could be prevented by providing a unique id to the location data structure, but, doesn't really matter, at least for now. 
+
       chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
         const tab = tabs[0];
         if (!tab) return console.error('No active tab found');
