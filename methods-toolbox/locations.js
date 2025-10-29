@@ -6,7 +6,7 @@ window.LOCATION_HANDLING.load_locations = async function () {
     try {
         // get() resolves to { locations: … }
         result = await chrome.storage.local.get(["locations"]);
-    } catch (e) {
+    } catch (e) { 
         console.error(`issue in load_locations (get): ${e}`);
         result = { locations: undefined };
     }
@@ -46,7 +46,26 @@ window.LOCATION_HANDLING.add_location = async function (location) {
 window.LOCATION_HANDLING.remove_location = async function (location) {
     const { locations = [] } = await chrome.storage.local.get(["locations"]);
     
-    locations.filter((loc)=> loc !== location )
+    const filteredLocs = locations.filter((loc)=> !window.LOCATION_HANDLING.locations_are_equals(loc, location))
 
-    console.log(locations)
+    console.log(filteredLocs)
+
+    await chrome.storage.local.set({ locations: filteredLocs });
+    
+    await window.CACHE_HANDLING.remove_location(location);
+
+    
 }
+
+window.LOCATION_HANDLING.locations_are_equals = function (locationA, locationB) {
+    const SAME_NAME = locationA.location == locationB.location
+    const SAME_X_COORD = locationA.x == locationB.x
+    const SAME_Y_COORD = locationA.y == locationB.y
+
+    return SAME_NAME && SAME_X_COORD && SAME_Y_COORD
+}
+
+chrome.runtime.onMessage.addListener((msg, _sender, _sendResponse) => {
+    console.log("msg received!");
+    window.LOCATION_HANDLING.remove_location(msg);
+})

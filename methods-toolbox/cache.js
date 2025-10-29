@@ -4,6 +4,10 @@ const MONTH_MILLIS = 1000 * 60 * 60 * 24 * 30;
 
 window.CACHE_HANDLING.cache_timings = async function (coords, timings) {
     const result = await chrome.storage.local.get(["timings"]);
+
+    console.log("timings:")
+    console.log(timings)
+    console.log(result)
     let current = result.timings || {};
 
     current[coords] = {
@@ -32,6 +36,31 @@ window.CACHE_HANDLING.clear_cache = async function () {
     await chrome.storage.local.set({ timings: {} });
 };
 
+window.CACHE_HANDLING.remove_location = async (location) =>{
+    const { timings = {} } = await chrome.storage.local.get(["timings"]);
+
+    let revised_timings = {};
+    for( let timing in timings ){
+
+        const DATA_IS_EXPIRED = Date.now() > timings[timing].date + MONTH_MILLIS;
+        if (DATA_IS_EXPIRED){
+            delete timings[timing];
+            continue;
+        }
+
+        const time = timings[timing].time.filter((cached_loc) =>
+             !window.LOCATION_HANDLING.locations_are_equals(location, cached_loc.location)
+        );
+
+        revised_timings[timing] = {
+            date: timings[timing].date,
+            time: time
+        }
+    }
+
+    await chrome.storage.local.set({ timings: revised_timings });
+};
+
 window.CACHE_HANDLING.restart_cache = async function () {
     const result = await chrome.storage.local.get(["timings"]);
     const cache = result.timings || {};
@@ -39,8 +68,8 @@ window.CACHE_HANDLING.restart_cache = async function () {
     let changed = false;
 
     for (let coords in cache) {
-        const is_expired = Date.now() > cache[coords].date + MONTH_MILLIS;
-        if (is_expired) {
+        const IS_EXPIRED = Date.now() > cache[coords].date + MONTH_MILLIS;
+        if (IS_EXPIRED) {
             delete cache[coords];
             changed = true;
         }

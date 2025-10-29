@@ -16,8 +16,10 @@
     {
       "matches": ["https://www.grandsgites.com/*", "https://www.gites.fr/*"],
       "js": [
-        "private/methods.js","methods-toolbox/helper-methods.js","coords-extraction/site-configs.js",
-        "coords-extraction/strategies.js", "methods-toolbox/locations.js", "methods-toolbox/cache.js",
+        "private/methods.js",
+        "coords-extraction/methods.js", "coords-extraction/site-configs.js","coords-extraction/strategies.js",
+        "methods-toolbox/api-handling.js",  "methods-toolbox/cache.js", "methods-toolbox/helper-methods.js",
+        "methods-toolbox/locations.js",
         "content.js"
       ]
     }

@@ -1,32 +1,9 @@
 async function main() {
     await window.CACHE_HANDLING.restart_cache();
 
-    const hostname = window.location.hostname;
+    const coords = await  window.COORDS_EXTRACTION.get_coords_in_page();
 
-    const config = window.COORDS_EXTRACTION.SITE_CONFIGS[hostname];
-
-    if (!config || !config.strategy){
-      console.log("L'extension ne sait pas extraire les coordonées de ce site");
-      return;
-    }
-
-    const coords = await window.COORDS_EXTRACTION.STRATEGIES[config.strategy](config);
-
-    console.log(coords)
-
-    let panel_content;
-    
-    if(coords){
-      panel_content = await window.HELPER_METHODS.send_requests(coords);
-    }else{
-      panel_content = await window.LOCATION_HANDLING.load_locations();
-    }
-
-    // if(!coords){
-      // const locations = await window.LOCATION_HANDLING.load_locations();
-      // load_right_panel(locations)
-      // return;
-    // }
+    const panel_content = await window.HELPER_METHODS.get_panel_content(coords);
 
     load_right_panel(panel_content)
     return;
@@ -35,17 +12,16 @@ async function main() {
 main();
 
 function load_right_panel(times) {
-  if (document.getElementById('my-left-panel')) return;
+  let iframe = document.getElementById('my-left-panel');
 
-  const iframe = document.createElement('iframe');
-  iframe.src = chrome.runtime.getURL('panel/panel.html');
-  iframe.id = 'my-left-panel';
-  iframe.style.cssText = get_panel_css();
-  document.body.appendChild(iframe);
+  if (!iframe){
+    iframe = document.createElement('iframe');
+    iframe.src = chrome.runtime.getURL('panel/panel.html');
+    iframe.id = 'my-left-panel';
+    iframe.style.cssText = get_panel_css();
+    document.body.appendChild(iframe);
+  } 
 
-  // console.log(times)
-  // console.log(tytimes)
-  
   iframe.onload = () => {
     iframe.contentWindow.postMessage({ type: 'data', payload: times}, '*');
   };

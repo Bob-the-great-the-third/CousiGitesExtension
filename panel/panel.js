@@ -34,27 +34,70 @@ window.addEventListener('message', (event) => {
 
 
 function renderJsonList(data) {
+
+  console.log("data in render:")
+  console.log(data)
   const container = document.getElementById("json-container");
   if (!container)
     console.error("erreur")
   container.innerHTML = ""; // Clear previous content
-  
-  data.sort((a,b) => b.duration?.value - a.duration?.value);
 
-  // let maxTime = data[0].duration;
+  data.sort((a, b) => b.duration?.value - a.duration?.value);
+
+  let id_counter = 0;
   data.forEach(item => {
-    const div = document.createElement("div");
-    div.className = "json-item";
-    div.innerHTML = `
-      <button id="" onclick="window.LOCATION_HANDLING.remove_location(${item.location.location || item.location})" class="delete-btn">X</button>
-      <span class="nom">${item.location.location || item.location}</span>
-      <span class="temps">${item.duration?.text || "...h..."}</span>
-    `;
-    container.appendChild(div);
+
+    const loc = item.location?.location ? item.location: item;
+    const div_id = id_counter + "-" + loc.location;
+    id_counter++;
+
+    const div = document.createElement('div');
+    div.className = 'json-item';
+    div.id = div_id;
     
-    // if(maxTime.value<item.duration?.value)
-      // maxTime=item.duration;
+    const btn = document.createElement('button');
+    btn.className = 'delete-btn';
+    btn.type = 'button';               // prevents submitting a form
+    btn.textContent = 'X';             // safe text
+    
+    btn.addEventListener('click', async () => {
+      
+      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+        const tab = tabs[0];
+        if (!tab) return console.error('No active tab found');
+        chrome.tabs.sendMessage(tab.id, loc);
+      });
+
+      const elt_to_remove = document.getElementById(div_id);
+      elt_to_remove.parentNode.removeChild(elt_to_remove);
+    });
+
+    const nom = document.createElement('span');
+    nom.className = 'nom';
+    nom.textContent = loc.location;
+
+    const temps = document.createElement('span');
+    temps.className = 'temps';
+    temps.textContent = item.duration?.text ?? '...h...';
+
+    div.append(btn, nom, temps);
+    container.appendChild(div);
+
   });
+
+  // data.forEach(item => {
+  //   const div = document.createElement("div");
+  //   div.className = "json-item";
+  //   div.innerHTML = `
+  //     <button id="" onclick="window.LOCATION_HANDLING.remove_location(${item.location.location || item.location})" class="delete-btn">X</button>
+  //     <span class="nom">${item.location.location || item.location}</span>
+  //     <span class="temps">${item.duration?.text || "...h..."}</span>
+  //   `;
+  //   container.appendChild(div);
+
+  //   // if(maxTime.value<item.duration?.value)
+  //     // maxTime=item.duration;
+  // });
 
   // console.log(maxTime)
 
@@ -63,7 +106,3 @@ function renderJsonList(data) {
   //   <h4>Temps maximal -> ${maxTime.text}</h4>
   // `;
 }
-
-// async function remove_location(location) {
-  // await window.LOCATION_HANDLING.remove_location(location)
-// }
