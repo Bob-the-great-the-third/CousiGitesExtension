@@ -1,7 +1,6 @@
 window.LOCATION_HANDLING = window.LOCATION_HANDLING || {};
 
 window.LOCATION_HANDLING.load_locations = async function () {
-    console.log("Loading the location...");
     let result;
     try {
         // get() resolves to { locations: … }
@@ -24,8 +23,6 @@ window.LOCATION_HANDLING.load_locations = async function () {
             result.locations = defaults;
         }
     }
-
-    console.log("Location loaded.");
 
     return result.locations; // always an array
 };
@@ -53,8 +50,6 @@ window.LOCATION_HANDLING.remove_location = async function (location) {
     await chrome.storage.local.set({ locations: filteredLocs });
     
     await window.CACHE_HANDLING.remove_location(location);
-
-    
 }
 
 window.LOCATION_HANDLING.locations_are_equals = function (locationA, locationB) {
@@ -65,7 +60,42 @@ window.LOCATION_HANDLING.locations_are_equals = function (locationA, locationB) 
     return SAME_NAME && SAME_X_COORD && SAME_Y_COORD
 }
 
-chrome.runtime.onMessage.addListener((msg, _sender, _sendResponse) => {
-    console.log("msg received!");
-    window.LOCATION_HANDLING.remove_location(msg);
-})
+window.LOCATION_HANDLING.parse_location_input = function (loc_input){
+    try{
+        let resulting_loc = { location: loc_input.location ?? "Sans nom" };
+
+        if(!loc_input.y || !loc_input.x){
+            const coords_to_parse = loc_input.x ? loc_input.x : loc_input.y;
+
+            const split_coords = coords_to_parse.split(",");
+            if (split_coords.length<2)
+                throw Error("Only one value(latitude/longitude) could be identified");
+
+            loc_input.x=split_coords[0];
+            loc_input.y=split_coords[1];
+        }
+
+        resulting_loc["x"]=window.LOCATION_HANDLING.parse_singular_coord(loc_input.x.trim());
+        resulting_loc["y"]=window.LOCATION_HANDLING.parse_singular_coord(loc_input.y.trim());
+
+        return resulting_loc;
+    }catch(e){
+        throw Error(`Added coordinates couldn't be parsed, ${e.message}`) 
+    } 
+}
+
+window.LOCATION_HANDLING.parse_singular_coord = function (coord_value){
+    const REGEX = {
+        DMS:  /^(?<degrees>180|1[0-7]\d|[1-9]?\d)°\s*(?<minutes>[0-5]?\d)'\s*(?<seconds>[0-5]?\d(?:\.\d+)?)"\s*(?<direction>[NSEW])?$/i,
+        DDD: /^-?(?:180|1[0-7]\d|[1-9]?\d)(?:\.\d+)?$/
+    }
+
+    if (REGEX.DDD.test(coord_value))
+        return coord_value;
+
+    const DMS_REGEX_EVAL = coord_value.match(REGEX.DMS);
+
+
+
+    console.log(DMS_REGEX_EVAL)
+}

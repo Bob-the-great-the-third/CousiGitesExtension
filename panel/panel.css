@@ -42,6 +42,23 @@ body {
   transform: translateX(10px);
 }
 
+.add-btn-container{
+  text-align: center;
+}
+
+#add-button{
+  background: #29ae32;
+  border: none;
+  color: white;
+  border-radius: 4px;
+  padding: 4px 4.5vw;
+  cursor: pointer;
+  font-size: 3.5vh;
+  position:relative;
+  display: inline-block;
+  margin: 12px auto; /* vertical margin + auto horizontal */
+}
+
 .delete-btn {
   display: none;
   background: #ff4d4d;

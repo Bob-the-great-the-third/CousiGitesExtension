@@ -4,32 +4,41 @@ window.addEventListener('message', (event) => {
   }
 });
 
-// document.addEventListener('DOMContentLoaded', function () {
-//   document.getElementById('popupOverlay').addEventListener('click', (e) => {
-//     if (e.target.id === 'popupOverlay') {
-//       document.getElementById('popupOverlay').style.display = 'none';
-//     }
-//   });
+document.addEventListener('DOMContentLoaded', function () {
 
-//   document.getElementById('openPopupBtn').addEventListener('click', () => {
-//     document.getElementById('popupOverlay').style.display = 'flex';
-//   });
+  document.getElementById('popupOverlay').addEventListener('click', (e) => {
+    if (e.target.id === 'popupOverlay') {
+      document.getElementById('popupOverlay').style.display = 'none';
+    }
+  });
 
-//   document.getElementById('submitBtn').addEventListener('click', () => {
-//     const LOC = document.getElementById("name")
-//     const X = document.getElementById("x")
-//     const Y = document.getElementById("y")
+  document.getElementById('add-button').addEventListener('click', () => {
+    document.getElementById('popupOverlay').style.display = 'flex';
+  });
 
-//     window.LOCATION_HANDLING.add_location({
-//       "location": LOC,
-//       "x": X,
-//       "y": X
-//     })
+  document.getElementById('submitBtn').addEventListener('click', () => {
+    const LOC = document.getElementById("name")
+    const X = document.getElementById("x")
+    const Y = document.getElementById("y")
 
-//     document.getElementById('popupOverlay').style.display = 'none';
-//   });
+    send_msg_to_extension({
+      objective:"ADD_LOCATION",
+      data: {
+        location: LOC.value,
+        x:X.value,
+        y:Y.value
+      }
+    })
+    
+    // window.LOCATION_HANDLING.add_location({
+    //   "location": LOC,
+    //   "x": X,
+    //   "y": X
+    // })
 
-// })
+    document.getElementById('popupOverlay').style.display = 'none';
+  });
+})
 
 
 
@@ -65,10 +74,9 @@ function renderJsonList(data) {
       // chrome storage while the web panel only removes one of the two.
       // Could be prevented by providing a unique id to the location data structure, but, doesn't really matter, at least for now. 
 
-      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-        const tab = tabs[0];
-        if (!tab) return console.error('No active tab found');
-        chrome.tabs.sendMessage(tab.id, loc);
+      send_msg_to_extension({
+        objective:"REMOVE_LOCATION",
+        data: loc
       });
 
       const elt_to_remove = document.getElementById(div_id);
@@ -85,27 +93,16 @@ function renderJsonList(data) {
 
     div.append(btn, nom, temps);
     container.appendChild(div);
-
   });
+}
 
-  // data.forEach(item => {
-  //   const div = document.createElement("div");
-  //   div.className = "json-item";
-  //   div.innerHTML = `
-  //     <button id="" onclick="window.LOCATION_HANDLING.remove_location(${item.location.location || item.location})" class="delete-btn">X</button>
-  //     <span class="nom">${item.location.location || item.location}</span>
-  //     <span class="temps">${item.duration?.text || "...h..."}</span>
-  //   `;
-  //   container.appendChild(div);
-
-  //   // if(maxTime.value<item.duration?.value)
-  //     // maxTime=item.duration;
-  // });
-
-  // console.log(maxTime)
-
-  // const maxTimeDom = document.getElementById("max-time");
-  // maxTimeDom.innerHTML = `
-  //   <h4>Temps maximal -> ${maxTime.text}</h4>
-  // `;
+function send_msg_to_extension(msg){
+  chrome.tabs.query(
+    { active: true, currentWindow: true },
+    (tabs) => {
+      const tab = tabs[0];
+      if (!tab) return console.error('No active tab found');
+        
+      chrome.tabs.sendMessage(tab.id,msg);
+    });
 }

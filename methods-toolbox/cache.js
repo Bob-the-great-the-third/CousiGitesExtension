@@ -5,9 +5,6 @@ const MONTH_MILLIS = 1000 * 60 * 60 * 24 * 30;
 window.CACHE_HANDLING.cache_timings = async function (coords, timings) {
     const result = await chrome.storage.local.get(["timings"]);
 
-    console.log("timings:")
-    console.log(timings)
-    console.log(result)
     let current = result.timings || {};
 
     current[coords] = {

@@ -20,7 +20,7 @@
         "coords-extraction/methods.js", "coords-extraction/site-configs.js","coords-extraction/strategies.js",
         "methods-toolbox/api-handling.js",  "methods-toolbox/cache.js", "methods-toolbox/helper-methods.js",
         "methods-toolbox/locations.js",
-        "content.js"
+        "message_handling.js","content.js"
       ]
     }
   ],
