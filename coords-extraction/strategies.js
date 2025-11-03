@@ -9,8 +9,6 @@ window.COORDS_EXTRACTION.STRATEGIES = {
         if(!scriptTag)
             return;
 
-        console.log(scriptTag)
-
         const jsonText = scriptTag.textContent.trim().replace(/^<!--/, '').replace(/-->$/, '');
 
         const data = JSON.parse(jsonText);

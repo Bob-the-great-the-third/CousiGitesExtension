@@ -28,14 +28,10 @@ window.API_HANDLING.send_requests = async function (coords_gite) {
             return true;
         })
 
-        console.log(filtered_locations);
-
         const requests = filtered_locations.map(async(location) => window.API_HANDLING.call_api(location, coords_gite,PRIVATE_DATA.API_KEY, CONSTANTS.MAPS.CORS_PROXY));
 
         const times = await Promise.all(requests);
 
-        console.log(`Calculated:`);
-        console.log(times)
         await window.CACHE_HANDLING.cache_timings(coords_gite, times.concat(cached_loc_timings));
         return times.concat(cached_loc_timings);
     } catch (error) {

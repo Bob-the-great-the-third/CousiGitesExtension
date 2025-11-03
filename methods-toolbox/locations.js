@@ -13,7 +13,6 @@ window.LOCATION_HANDLING.load_locations = async function () {
     if (!result.locations) {
         // If nothing stored yet, fall back to defaults
         const defaults = window.PRIVATE_METHODS.default_locations();
-        console.log("loading default locations");
         try {
             await chrome.storage.local.set({ locations: defaults });
             result.locations = defaults;
@@ -45,8 +44,6 @@ window.LOCATION_HANDLING.remove_location = async function (location) {
     
     const filteredLocs = locations.filter((loc)=> !window.LOCATION_HANDLING.locations_are_equals(loc, location))
 
-    console.log(filteredLocs)
-
     await chrome.storage.local.set({ locations: filteredLocs });
     
     await window.CACHE_HANDLING.remove_location(location);
@@ -62,7 +59,7 @@ window.LOCATION_HANDLING.locations_are_equals = function (locationA, locationB) 
 
 window.LOCATION_HANDLING.parse_location_input = function (loc_input){
     try{
-        let resulting_loc = { location: loc_input.location ?? "Sans nom" };
+        let resulting_loc = { location: loc_input.location!="" ? loc_input.location : "Sans nom" };
 
         if(!loc_input.y || !loc_input.x){
             const coords_to_parse = loc_input.x ? loc_input.x : loc_input.y;
@@ -77,8 +74,6 @@ window.LOCATION_HANDLING.parse_location_input = function (loc_input){
 
         resulting_loc["x"]=window.LOCATION_HANDLING.parse_singular_coord(loc_input.x.trim());
         resulting_loc["y"]=window.LOCATION_HANDLING.parse_singular_coord(loc_input.y.trim());
-
-        console.log(resulting_loc)
 
         return resulting_loc;
     }catch(e){

@@ -14,14 +14,16 @@ main();
 function load_right_panel(times) {
   let iframe = document.getElementById('my-left-panel');
 
-  if (!iframe){
-    iframe = document.createElement('iframe');
-    iframe.src = chrome.runtime.getURL('panel/panel.html');
-    iframe.id = 'my-left-panel';
-    iframe.style.cssText = get_panel_css();
-    document.body.appendChild(iframe);
-  } 
-
+  if (iframe){
+    iframe.contentWindow.postMessage({ type: 'data', payload: times}, '*');
+    return;
+  }
+  
+  iframe = document.createElement('iframe');
+  iframe.src = chrome.runtime.getURL('panel/panel.html');
+  iframe.id = 'my-left-panel';
+  iframe.style.cssText = get_panel_css();
+  document.body.appendChild(iframe);
   iframe.onload = () => {
     iframe.contentWindow.postMessage({ type: 'data', payload: times}, '*');
   };
