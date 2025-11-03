@@ -78,6 +78,8 @@ window.LOCATION_HANDLING.parse_location_input = function (loc_input){
         resulting_loc["x"]=window.LOCATION_HANDLING.parse_singular_coord(loc_input.x.trim());
         resulting_loc["y"]=window.LOCATION_HANDLING.parse_singular_coord(loc_input.y.trim());
 
+        console.log(resulting_loc)
+
         return resulting_loc;
     }catch(e){
         throw Error(`Added coordinates couldn't be parsed, ${e.message}`) 
@@ -93,9 +95,23 @@ window.LOCATION_HANDLING.parse_singular_coord = function (coord_value){
     if (REGEX.DDD.test(coord_value))
         return coord_value;
 
-    const DMS_REGEX_EVAL = coord_value.match(REGEX.DMS);
+    const DMS_REGEX_EVAL = coord_value.match(REGEX.DMS)
 
+    if (!DMS_REGEX_EVAL)
+        throw Error("Not DDD nor DMS coordinates \
+        Sorry other coordinates systems are yet to be implemented! You may want to look into a converter online")
+    
+    const null_matches = DMS_REGEX_EVAL.filter((match) => match)
 
+    if (null_matches.length!=DMS_REGEX_EVAL.length)
+        throw Error("DMS lacks a key (a number(° or ' or \") or the direction(NSEW))\n\
+        Sorry other coordinates systems are yet to be implemented! You may want to look into a converter online")
+    
+    const sign = DMS_REGEX_EVAL.groups.direction.toLowerCase() in ["s", "w"] ? -1 : 1;
 
-    console.log(DMS_REGEX_EVAL)
+    const coord_ddd = (parseInt(DMS_REGEX_EVAL.groups.degrees) +
+                    parseInt(DMS_REGEX_EVAL.groups.minutes) / 60 + 
+                    parseFloat(DMS_REGEX_EVAL.groups.seconds) / 3600)
+
+    return sign * coord_ddd
 }
