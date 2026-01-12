@@ -18,6 +18,8 @@ window.CACHE_HANDLING.cache_timings = async function (coords, timings) {
 window.CACHE_HANDLING.get_cached_location = async function(coords) {
     const result = await chrome.storage.local.get(["timings"]);
     const timings = result.timings || {};
+    console.log("timings cache");
+    console.log(timings)
     const timings_in_cache = timings[coords];
 
     if (timings_in_cache !== undefined) {

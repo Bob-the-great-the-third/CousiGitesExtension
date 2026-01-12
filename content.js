@@ -1,31 +1,48 @@
 async function main() {
     await window.CACHE_HANDLING.restart_cache();
 
+    await window.DATA_MANAGEMENT.load_extension_data();
+
     const coords = await  window.COORDS_EXTRACTION.get_coords_in_page();
 
     const panel_content = await window.HELPER_METHODS.get_panel_content(coords);
 
     load_right_panel(panel_content)
+
     return;
 }
 
 main();
 
 function load_right_panel(times) {
-  let iframe = document.getElementById('my-left-panel');
+  let iframe = document.getElementById('my-panel');
 
   if (iframe){
-    iframe.contentWindow.postMessage({ type: 'data', payload: times}, '*');
+    iframe.contentWindow.postMessage({ 
+      type: 'data', 
+      payload: { 
+        timings: times, 
+        total_requests_counter:  window.DATA_MANAGEMENT.data.total_requests_counter 
+      }
+    }, '*');
     return;
   }
-  
+
   iframe = document.createElement('iframe');
   iframe.src = chrome.runtime.getURL('panel/panel.html');
-  iframe.id = 'my-left-panel';
+  iframe.id = 'my-panel';
   iframe.style.cssText = get_panel_css();
   document.body.appendChild(iframe);
+  console.log("content.js b4 message")
+  console.log(window.DATA_MANAGEMENT.data.total_requests_counter)
   iframe.onload = () => {
-    iframe.contentWindow.postMessage({ type: 'data', payload: times}, '*');
+    iframe.contentWindow.postMessage({ 
+      type: 'data', 
+      payload: { 
+        timings: times, 
+        total_requests_counter:  window.DATA_MANAGEMENT.data.total_requests_counter 
+      }
+    }, '*');
   };
 }
 
@@ -49,9 +66,9 @@ function get_panel_css(){
       `
     case `LEFT`:
       return COMMON_PART + `
-        border-radius: 0% 20px 0% 0%;
+        border-radius: 0% 20px 20px 0%;;
         width: 15vw;
-        height: 95vh;
+        min-height: 10vh;
         top: 5vh;
         left: 0;
       `
@@ -59,15 +76,15 @@ function get_panel_css(){
       return COMMON_PART + `
         border-radius: 20px 20px 0% 0%;
         width: 90vw;
-        height:20vh; 
+        min-height:20vh; 
         bottom: 0;
         left: 5vw;
       `
     case `RIGHT`: default:
       return COMMON_PART + `
-        border-radius: 20px 0% 0% 0%;
+        border-radius: 20px 0% 0% 20px;
         width: 15vw;
-        height: 95vh;
+        min-height: 10vh;
         top: 5vh;
         right: 0;
       `
